@@ -20,33 +20,35 @@ def main(page: ft.Page):
         min_extended_width=200,
         leading=ft.Column(
             [
+                ft.Text("Title",text_align=ft.TextAlign.CENTER,width=200,weight=ft.FontWeight.BOLD,size=20),
+                ft.Text("Artist",text_align=ft.TextAlign.CENTER,width=200),
                 ft.Row(
                     [
                         ft.IconButton(
-                            icon=ft.Icons.PLAY_CIRCLE_FILL_OUTLINED
+                            icon=ft.Icons.CHEVRON_LEFT
                         ),
                         ft.IconButton(
                             icon=ft.Icons.PLAY_CIRCLE_FILL_OUTLINED
                         ),
                         ft.IconButton(
-                            icon=ft.Icons.PLAY_CIRCLE_FILL_OUTLINED
+                            icon=ft.Icons.CHEVRON_RIGHT
                         )
-                    ], alignment=ft.MainAxisAlignment.SPACE_AROUND
+                    ], alignment=ft.MainAxisAlignment.CENTER, width=200
                 ),
-                ft.ProgressBar(width=200,value=0)
+                ft.ProgressBar(width=200,value=0),
             ]
         ),
         group_alignment=-0.9,
         destinations=[
             ft.NavigationRailDestination(
-                icon=ft.Icons.FAVORITE_BORDER,
-                selected_icon=ft.Icons.FAVORITE,
-                label="First",
+                icon=ft.Icons.MUSIC_NOTE_OUTLINED,
+                selected_icon=ft.Icons.MUSIC_NOTE,
+                label="Songs",
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.BOOKMARK_BORDER),
-                selected_icon=ft.Icon(ft.Icons.BOOKMARK),
-                label="Second",
+                icon=ft.Icons.FAVORITE_BORDER,
+                selected_icon=ft.Icons.FAVORITE,
+                label="Credits",
             ),
             ft.NavigationRailDestination(
                 icon=ft.Icons.SETTINGS_OUTLINED,
