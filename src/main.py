@@ -1,8 +1,8 @@
+from searcher import OsuSearcher
+from songlist import SongList
 from credits import Credits
 from sidebar import Sidebar
-from songlist import SongList
 import flet as ft
-
 
 cur_ind = 0
 def play_handler(id):
