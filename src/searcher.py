@@ -11,7 +11,10 @@ def first(pat,st):
     return False if len(content) == 0 else content[0]
 
 def find_name(what,content):
-    return first(osu_regex.replace("{free}",what),content).strip()
+    res = first(osu_regex.replace("{free}",what),content)
+    if not res:
+        return None
+    return res.strip()
 
 class OsuSearcher():
     def __init__(self,osu_folder,id_cache=None,folder_cache=None):
@@ -45,6 +48,8 @@ class OsuSearcher():
                     content = f.read()
                 
                 bms_id = first(bms_id_regex,content)
+                if bms_id in self.id_cache.keys():
+                    return
                 audio_path = find_name("AudioFilename",content)
                 
                 title = find_name("Title",content)
@@ -52,14 +57,18 @@ class OsuSearcher():
                 tags = find_name("Tags",content)
                 if bms_id and audio_path and title and artist:
                     break
+        if not audio_path:
+            return
         real_path = os.path.join(song,audio_path)
         if real_path:
+            actual = os.path.join(path,audio_path)
+            if not os.path.isfile(actual):
+                return False
             seconds = 0
         
-            audio = File(os.path.join(path,audio_path))
+            audio = File(actual)
             if audio and audio.info:
                 seconds = audio.info.length
-            
             self.id_cache[bms_id] = {
                 "audio": real_path,
                 "title": title,
@@ -69,4 +78,6 @@ class OsuSearcher():
             }
             self.folder_cache[song] = bms_id
             
-            #print(self.id_cache[bms_id])
+            return bms_id
+
+        return False

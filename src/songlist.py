@@ -1,8 +1,9 @@
 import flet as ft
 
-class Song(ft.Row):
+class Song(ft.GridView):
     def __init__(self,id,title,artist,length,play_handler,favorite_handler):
         super().__init__()
+        self.id = id
         self.controls = [
             ft.IconButton(ft.Icons.ARROW_RIGHT,on_click=lambda z: play_handler(id)),
             ft.Text(title,weight=ft.FontWeight.BOLD),
@@ -10,7 +11,10 @@ class Song(ft.Row):
             ft.Text(length),
             ft.IconButton(ft.Icons.FAVORITE_BORDER,on_click=lambda z: favorite_handler(id)),
         ]
-        self.alignment = ft.MainAxisAlignment.SPACE_BETWEEN
+        self.max_extent=220
+        self.child_aspect_ratio=5.0
+        self.spacing=5
+        self.run_spacing=5
         self.expand = True
 
 class SongList(ft.ListView):
