@@ -32,8 +32,6 @@ class OsuSearcher():
     def step(self):
         song = self.queue.pop()
         if song in self.folder_cache.keys():
-            if len(self.queue) > 0:
-                return self.step()
             return
         path = os.path.join(self.songs,song)
         files = os.listdir(path)
@@ -43,7 +41,7 @@ class OsuSearcher():
         for i in files:
             osu_file = os.path.join(path,i)
             if osu_file.endswith(".osu"):
-                print(osu_file)
+                #print(osu_file)
                 with open(osu_file,"r") as f:
                     content = f.read()
                 

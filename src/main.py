@@ -1,33 +1,21 @@
-import json
-import threading
-from time import sleep
-import time
 from searcher import OsuSearcher
 from songlist import SongList
 from credits import Credits
 from sidebar import Sidebar
+from time import sleep
 import flet as ft
+import flet_audio as ft_audio
+import threading
+import json
+import time
+import os
 
-searcher = OsuSearcher("/media/guhw/guhw/osu-wine/osu!")
+song_folder = "/media/guhw/guhw/osu-wine/osu!"
+
+searcher = OsuSearcher(song_folder)
+playing_audio: ft.Audio = None
 
 cur_ind = 0
-def play_handler(id):
-    print("play",id)
-
-def favorite_handler(id):
-    print("favorite",id)
-
-def repeat_toggle(button):
-    print("repeat toggle",button)
-
-def back():
-    print("back")
-
-def play_pause():
-    print("play/pause")
-
-def skip():
-    print("skip")
 
 def cool_time(total):
     minutes = total // 60
@@ -46,8 +34,26 @@ def load_all(page: ft.Page):
         searcher.id_cache = {}
         searcher.folder_cache = {}
 
-
 def main(page: ft.Page):
+    global last_check
+    def favorite_handler(id):
+        print("favorite",id)
+
+    def repeat_toggle(button):
+        print("repeat toggle",button)
+
+    def back():
+        print("back")
+
+    def play_pause():
+        print("play/pause")
+
+    def skip():
+        print("skip")
+    
+    def volume(to):
+        print(to)
+    
     load_all(page)
     page.title = "osu!fm"
     page.window.min_height = 600
@@ -61,6 +67,27 @@ def main(page: ft.Page):
         center_title=False,
         bgcolor=ft.Colors.SURFACE_CONTAINER_HIGHEST,
     )
+    
+    sidebar = None # buh
+    last_check = time.time()
+    
+    def pos_change():
+        global last_check
+        pos = playing_audio.get_current_position()
+        dur = playing_audio.get_duration()
+        print(pos,dur)
+        sidebar.leading.progress.value = (pos/dur)
+        sidebar.leading.progress.update()
+        last_check = time.time()
+    def play_handler(id):
+        global playing_audio
+        data = searcher.id_cache[id]
+        audio = os.path.join(song_folder,"Songs",data["audio"])
+        if playing_audio != None:
+            page.remove(playing_audio)
+        playing_audio = ft_audio.Audio(audio,autoplay=True,on_position_changed=lambda z: pos_change())
+        page.add(playing_audio)
+    
     song_list = SongList(play_handler,favorite_handler)
     pages = [
         song_list,
@@ -76,9 +103,11 @@ def main(page: ft.Page):
         pages[cur_ind].update()
         cur_ind = ind
     
+    sidebar = Sidebar(0,page_change, repeat_toggle,back,play_pause,skip,volume)
+    
     content = ft.Row(
             [
-                Sidebar(0,page_change, repeat_toggle,back,play_pause,skip),
+                sidebar,
                 ft.VerticalDivider(width=1),
             ],
             expand=True,
